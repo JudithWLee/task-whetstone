@@ -8,14 +8,25 @@ class ToDo(Label):
 
 class BootstrapApp(App):
     CSS_PATH = "to_do_list.tcss"
+    BINDINGS = [("d", "delete_to_do", "Delete highlighted to do")]
+
+    def __init__(self):
+        super().__init__()
+
     def compose(self) -> ComposeResult:
         yield Header()
         yield ListView(
-            ListItem(ToDo("Implement to do content editing"), id = "one"),
-            ListItem(ToDo("Implement adding new to do item"), id = "two"),
-            ListItem(ToDo("Implement removing to do item"), id = "three"),
+            ListItem(ToDo("Implement to do content editing")),
+            ListItem(ToDo("Implement adding new to do item")),
+            ListItem(ToDo("Implement removing to do item")),
         )
         yield Footer()
+
+    def action_delete_to_do(self) -> None:
+        """Delete highlighted to do."""
+        to_do_list = self.query_one(ListView)
+        if to_do_list.index is not None:
+            to_do_list.pop(to_do_list.index)
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """If user clicks on item."""
