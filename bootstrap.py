@@ -16,9 +16,9 @@ class BootstrapApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield ListView(
-            ListItem(ToDo("Implement to do content editing")),
+            ListItem(ToDo("Implement temporary input widget in ListView")),
             ListItem(ToDo("Implement adding new to do item")),
-            ListItem(ToDo("Implement removing to do item")),
+            ListItem(ToDo("Implement to do content editing")),
         )
         yield Footer()
 
