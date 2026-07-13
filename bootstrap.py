@@ -6,6 +6,12 @@ class ToDo(Label):
         super().__init__(content)
         self.content = content
 
+class VimListView(ListView):
+    BINDINGS = [
+        ("k", "cursor_up", "Move cursor up"),
+        ("j", "cursor_down", "Move cursor down"),
+    ]
+
 class BootstrapApp(App):
     CSS_PATH = "to_do_list.tcss"
     BINDINGS = [("d", "delete_to_do", "Delete highlighted to do")]
@@ -15,7 +21,7 @@ class BootstrapApp(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield ListView(
+        yield VimListView(
             ListItem(ToDo("Implement temporary input widget in ListView")),
             ListItem(ToDo("Implement adding new to do item")),
             ListItem(ToDo("Implement to do content editing")),
