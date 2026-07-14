@@ -1,5 +1,5 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Footer, Header, ListItem, ListView, Label
+from textual.widgets import Footer, Header, ListItem, ListView, Label, Input
 
 class ToDo(Label):
     def __init__(self, content: str):
@@ -14,7 +14,10 @@ class VimListView(ListView):
 
 class BootstrapApp(App):
     CSS_PATH = "to_do_list.tcss"
-    BINDINGS = [("d", "delete_to_do", "Delete highlighted to do")]
+    BINDINGS = [
+        ("d", "delete_to_do", "Delete highlighted to do"),
+        ("i", "insert_to_do", "Insert a new to do")
+    ]
 
     def __init__(self):
         super().__init__()
@@ -22,9 +25,10 @@ class BootstrapApp(App):
     def compose(self) -> ComposeResult:
         yield Header()
         yield VimListView(
-            ListItem(ToDo("Implement temporary input widget in ListView")),
-            ListItem(ToDo("Implement adding new to do item")),
+            ListItem(ToDo("Implement inputting stuff into the new input")),
+            ListItem(ToDo("Implement turning the input into new to do")),
             ListItem(ToDo("Implement to do content editing")),
+            ListItem(ToDo("Refactor bindings into VimListView")),
         )
         yield Footer()
 
@@ -33,6 +37,19 @@ class BootstrapApp(App):
         to_do_list = self.query_one(ListView)
         if to_do_list.index is not None:
             to_do_list.pop(to_do_list.index)
+
+    def action_insert_to_do(self) -> None:
+        """Add new to do."""
+        to_do_list = self.query_one(ListView)
+        current_index = to_do_list.index
+        new_input = Input(placeholder = "New to do item")
+        new_to_do = ListItem(new_input)
+
+        to_do_list.insert(current_index, [new_to_do])
+
+        # Update the highlight to the new object
+        new_to_do.highlighted = True
+        to_do_list.children[current_index+1].highlighted = False
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """If user clicks on item."""
