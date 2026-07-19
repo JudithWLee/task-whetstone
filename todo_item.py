@@ -28,5 +28,11 @@ class ToDoItem(ListItem):
         else:
             self.log("Child type not supported yet, plz implement")
 
-    def submit_content(self) -> None:
-        pass
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        # Take the string submitted and make it a label
+        self.content = event.value
+        self.remove_children()
+        self.mount(Label(self.content))
+
+        # Hand focus back to parent
+        self.parent.focus()

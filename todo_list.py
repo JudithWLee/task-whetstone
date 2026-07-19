@@ -1,4 +1,4 @@
-from textual.widgets import ListView, Input
+from textual.widgets import ListView
 from todo_item import ToDoItem
 
 class ToDoList(ListView):
@@ -28,17 +28,3 @@ class ToDoList(ListView):
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """If user clicks on item."""
         event.item.select()
-
-    def on_input_submitted(self, event: Input.Submitted) -> None:
-        # Take the string submitted
-        input_value = event.value
-
-        current_index = self.index
-        # Remove the item being selected
-        self.pop(current_index)
-        # Insert new to do
-        new_to_do = ToDoItem(input_value)
-        self.insert(current_index, [new_to_do])
-        new_to_do.highlighted == True
-
-        self.focus()
