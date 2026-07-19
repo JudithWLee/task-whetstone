@@ -1,5 +1,6 @@
 from textual.app import ComposeResult
 from textual.widgets import ListItem, Label, Input
+from todo_input import ToDoInput
 
 class ToDoItem(ListItem):
     def __init__(self, content: str = ""):
@@ -24,7 +25,7 @@ class ToDoItem(ListItem):
         child = self.query_one("*")
 
         self.remove_children()
-        input_box = Input(value = self.content)
+        input_box = ToDoInput(value = self.content)
         self.mount(input_box)
         input_box.focus()
 
