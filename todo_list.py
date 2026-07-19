@@ -8,6 +8,7 @@ class ToDoList(ListView):
         ("d", "delete_todo", "Delete highlighted to do"),
         ("O", "insert_todo_above", "Insert a new to do above"),
         ("o", "insert_todo_below", "Insert a new to do below"),
+        ("i", "edit_todo", "input/edit to do"),
     ]
 
     def action_delete_todo(self) -> None:
@@ -35,6 +36,9 @@ class ToDoList(ListView):
         new_todo_index = self.index + 1
         old_todo_index = self.index
         self._insert_todo(new_todo_index, old_todo_index)
+
+    def action_edit_todo(self) -> None:
+        self.children[self.index].edit()
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """If user clicks on item."""

@@ -28,6 +28,19 @@ class ToDoItem(ListItem):
         else:
             self.log("Child type not supported yet, plz implement")
 
+    def edit(self) -> None:
+        child = self.query_one("*")
+
+        if isinstance(child, Label):
+            self.remove_children()
+            input_box = Input(value = self.content)
+            self.mount(input_box)
+            input_box.focus()
+        elif isinstance(child, Input):
+            child.focus()
+        else:
+            self.log("Child type not supported yet, plz implement")
+
     def on_input_submitted(self, event: Input.Submitted) -> None:
         # Take the string submitted and make it a label
         self.content = event.value
