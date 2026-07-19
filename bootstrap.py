@@ -12,13 +12,30 @@ class ToDoList(ListView):
     BINDINGS = [
         ("k", "cursor_up", "Move cursor up"),
         ("j", "cursor_down", "Move cursor down"),
+        ("d", "delete_to_do", "Delete highlighted to do"),
+        ("i", "insert_to_do", "Insert a new to do"),
     ]
+
+    def action_delete_to_do(self) -> None:
+        """Delete highlighted to do."""
+        if self.index is not None:
+            self.pop(self.index)
+
+    def action_insert_to_do(self) -> None:
+        """Add new to do."""
+        current_index = self.index
+        new_input = Input(placeholder = "New to do item")
+        new_to_do = ListItem(new_input)
+
+        self.insert(current_index, [new_to_do])
+
+        # Update the highlight to the new object
+        new_to_do.highlighted = True
+        self.children[current_index+1].highlighted = False
 
 class BootstrapApp(App):
     CSS_PATH = "to_do_list.tcss"
     BINDINGS = [
-        ("d", "delete_to_do", "Delete highlighted to do"),
-        ("i", "insert_to_do", "Insert a new to do"),
     ]
 
     def __init__(self):
@@ -33,25 +50,6 @@ class BootstrapApp(App):
             ListItem(ToDoItem("Refactor bindings into ToDoList")),
         )
         yield Footer()
-
-    def action_delete_to_do(self) -> None:
-        """Delete highlighted to do."""
-        to_do_list = self.query_one(ToDoList)
-        if to_do_list.index is not None:
-            to_do_list.pop(to_do_list.index)
-
-    def action_insert_to_do(self) -> None:
-        """Add new to do."""
-        to_do_list = self.query_one(ToDoList)
-        current_index = to_do_list.index
-        new_input = Input(placeholder = "New to do item")
-        new_to_do = ListItem(new_input)
-
-        to_do_list.insert(current_index, [new_to_do])
-
-        # Update the highlight to the new object
-        new_to_do.highlighted = True
-        to_do_list.children[current_index+1].highlighted = False
 
     def on_list_view_selected(self, event: ToDoList.Selected) -> None:
         """If user clicks on item."""
