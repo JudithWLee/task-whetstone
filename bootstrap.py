@@ -3,12 +3,12 @@ from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, ListItem, ListView, Label, Input
 from textual.css.query import NoMatches
 
-class ToDo(Label):
+class ToDoItem(Label):
     def __init__(self, content: str):
         super().__init__(content)
         self.content = content
 
-class VimListView(ListView):
+class ToDoList(ListView):
     BINDINGS = [
         ("k", "cursor_up", "Move cursor up"),
         ("j", "cursor_down", "Move cursor down"),
@@ -26,23 +26,23 @@ class BootstrapApp(App):
 
     def compose(self) -> ComposeResult:
         yield Header()
-        yield VimListView(
-            ListItem(ToDo("Implement inputting stuff into the new input")),
-            ListItem(ToDo("Implement turning the input into new to do")),
-            ListItem(ToDo("Implement to do content editing")),
-            ListItem(ToDo("Refactor bindings into VimListView")),
+        yield ToDoList(
+            ListItem(ToDoItem("Implement inputting stuff into the new input")),
+            ListItem(ToDoItem("Implement turning the input into new to do")),
+            ListItem(ToDoItem("Implement to do content editing")),
+            ListItem(ToDoItem("Refactor bindings into ToDoList")),
         )
         yield Footer()
 
     def action_delete_to_do(self) -> None:
         """Delete highlighted to do."""
-        to_do_list = self.query_one(ListView)
+        to_do_list = self.query_one(ToDoList)
         if to_do_list.index is not None:
             to_do_list.pop(to_do_list.index)
 
     def action_insert_to_do(self) -> None:
         """Add new to do."""
-        to_do_list = self.query_one(ListView)
+        to_do_list = self.query_one(ToDoList)
         current_index = to_do_list.index
         new_input = Input(placeholder = "New to do item")
         new_to_do = ListItem(new_input)
@@ -53,10 +53,10 @@ class BootstrapApp(App):
         new_to_do.highlighted = True
         to_do_list.children[current_index+1].highlighted = False
 
-    def on_list_view_selected(self, event: ListView.Selected) -> None:
+    def on_list_view_selected(self, event: ToDoList.Selected) -> None:
         """If user clicks on item."""
         try:
-            todo = event.item.query_one(ToDo)
+            todo = event.item.query_one(ToDoItem)
             if event.item.has_class("completed"):
                 self.log(repr(todo.content))
                 todo.update(todo.content.removeprefix("\[DONE] "))
@@ -71,12 +71,12 @@ class BootstrapApp(App):
         # Take the string submitted
         input_value = event.value
 
-        to_do_list = self.query_one(ListView)
+        to_do_list = self.query_one(ToDoList)
         current_index = to_do_list.index
         # Remove the item being selected
         to_do_list.pop(current_index)
         # Insert new to do
-        new_to_do = ListItem(ToDo(input_value))
+        new_to_do = ListItem(ToDoItem(input_value))
         to_do_list.insert(current_index, [new_to_do])
         new_to_do.highlighted == True
 
