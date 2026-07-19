@@ -1,3 +1,4 @@
+import re
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header, ListItem, ListView, Label, Input
 from textual.css.query import NoMatches
@@ -54,10 +55,14 @@ class BootstrapApp(App):
 
     def on_list_view_selected(self, event: ListView.Selected) -> None:
         """If user clicks on item."""
-        event.item.add_class("completed") # event.item = the item user clicked on
         try:
             todo = event.item.query_one(ToDo)
-            todo.update(f"\[DONE] {todo.content}")
+            if event.item.has_class("completed"):
+                self.log(repr(todo.content))
+                todo.update(todo.content.removeprefix("\[DONE] "))
+            else:
+                todo.update(f"\[DONE] {todo.content}")
+            event.item.toggle_class("completed")
         except NoMatches:
             input_block = event.item.query_one(Input)
             input_block.focus()
