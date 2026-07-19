@@ -17,7 +17,7 @@ class BootstrapApp(App):
     CSS_PATH = "to_do_list.tcss"
     BINDINGS = [
         ("d", "delete_to_do", "Delete highlighted to do"),
-        ("i", "insert_to_do", "Insert a new to do")
+        ("i", "insert_to_do", "Insert a new to do"),
     ]
 
     def __init__(self):
@@ -61,6 +61,21 @@ class BootstrapApp(App):
         except NoMatches:
             input_block = event.item.query_one(Input)
             input_block.focus()
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        # Take the string submitted
+        input_value = event.value
+
+        to_do_list = self.query_one(ListView)
+        current_index = to_do_list.index
+        # Remove the item being selected
+        to_do_list.pop(current_index)
+        # Insert new to do
+        new_to_do = ListItem(ToDo(input_value))
+        to_do_list.insert(current_index, [new_to_do])
+        new_to_do.highlighted == True
+
+        to_do_list.focus()
 
 if __name__ == "__main__":
     app = BootstrapApp()
