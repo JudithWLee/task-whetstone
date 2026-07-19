@@ -2,44 +2,31 @@ from textual.app import ComposeResult
 from textual.widgets import ListItem, Label, Input
 
 class ToDoItem(ListItem):
-    def __init__(self, content: str = None):
+    def __init__(self, content: str = ""):
         super().__init__()
         self.content = content
 
     def compose(self) -> ComposeResult:
-        if self.content is not None:
-            yield Label(self.content)
-        else:
-            yield Input(placeholder = "New to do item")
+        yield Label(self.content)
 
     def select(self) -> None:
         """If user clicks on item."""
         child = self.query_one("*")
 
-        if isinstance(child, Label):
-            if self.has_class("completed"):
-                child.update(child.content.removeprefix("\[DONE] "))
-            else:
-                child.update(f"\[DONE] {child.content}")
-
-            self.toggle_class("completed")
-        elif isinstance(child, Input):
-            child.focus()
+        if self.has_class("completed"):
+            child.update(child.content.removeprefix("\[DONE] "))
         else:
-            self.log("Child type not supported yet, plz implement")
+            child.update(f"\[DONE] {child.content}")
+
+        self.toggle_class("completed")
 
     def edit(self) -> None:
         child = self.query_one("*")
 
-        if isinstance(child, Label):
-            self.remove_children()
-            input_box = Input(value = self.content)
-            self.mount(input_box)
-            input_box.focus()
-        elif isinstance(child, Input):
-            child.focus()
-        else:
-            self.log("Child type not supported yet, plz implement")
+        self.remove_children()
+        input_box = Input(value = self.content)
+        self.mount(input_box)
+        input_box.focus()
 
     def on_input_submitted(self, event: Input.Submitted) -> None:
         # Take the string submitted and make it a label
